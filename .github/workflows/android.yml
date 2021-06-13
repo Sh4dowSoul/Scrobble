@@ -1,0 +1,154 @@
+name: Android CI
+
+on:
+  pull_request:
+    branches: 
+      - main
+      - dev
+
+jobs:
+  check:
+    name: Check Project
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      
+    - name: Setup JDK 11
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
+        distribution: 'adopt'
+        
+    - name: Wrapper Validation
+      uses: gradle/wrapper-validation-action@v1
+      
+    - name: Detekt
+      uses: natiginfo/action-detekt-all@1.17.1
+      with:
+          args: --fail-fast --config detekt-config.yml
+
+      
+  assemble:
+    name: Assemble Project
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      
+    - name: Setup JDK 11
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
+        distribution: 'adopt'
+
+    - name: Gradle Cache
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}-${{ hashFiles('**/buildSrc/**/*.kt') }}
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Assemble with Gradle
+      run: ./gradlew assembleDebug --scan
+
+  test:
+    name: Unit Test
+    #needs: assemble
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      
+    - name: Setup JDK 11
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
+        distribution: 'adopt'
+
+    - name: Gradle Cache
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}-${{ hashFiles('**/buildSrc/**/*.kt') }}
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+      
+    - name: Run unit tests
+      run: ./gradlew testDebugUnitTest --stacktrace
+      
+    - name: Test Report
+      uses: asadmansr/android-test-report-action@v1.2.0
+      if: ${{ always() }}
+
+  instrumented-test:
+    name: Instrumented Test
+    #needs: assemble
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      
+    - name: Setup JDK 11
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
+        distribution: 'adopt'
+
+    - name: Gradle Cache
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}-${{ hashFiles('**/buildSrc/**/*.kt') }}
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+      
+    - name: Run Instrumentation Tests
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+          api-level: 29
+          arch: x86
+          profile: Nexus 6
+          script: ./gradlew connectedCheck --stacktrace
+    
+    - name: Copy Test Results
+      if: always()
+      run: |
+        mkdir -p instrumented
+        find . -type f -regex ".*/build/outputs/androidTest-results/.*xml" -exec sh -c 'x="{}"; mv "$x" "${x// /}"' \;
+        find . -type f -regex ".*/build/outputs/androidTest-results/.*xml" -exec cp {} instrumented/ \;
+          
+    - name: Upload Test Results
+      if: always()
+      uses: actions/upload-artifact@v1
+      with:
+        name: instrumented-results
+        path: instrumented
+
+  report:
+    name: Report test results
+    runs-on: ubuntu-latest
+    needs: [instrumented-test]
+    if: ${{ always() }}
+    steps:
+      - name: Download Test Reports Folder
+        uses: actions/download-artifact@v2
+        with:
+          name: instrumented-results
+ 
+      - name: Android Test Report
+        uses: asadmansr/android-test-report-action@v1.2.0
