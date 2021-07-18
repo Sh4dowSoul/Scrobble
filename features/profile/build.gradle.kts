@@ -59,7 +59,7 @@ dependencies {
     implementation("com.dropbox.mobile.store", "store4", "_")
 
     // DataStore-Manager
-    implementation("com.github.Sh4dowSoul.ComposePreferences:datastore-manager:develop-SNAPSHOT")
+    implementation("com.github.Sh4dowSoul.ComposePreferences:datastore-manager:_")
 
     // Dagger
     implementation(Google.dagger.hilt.android)

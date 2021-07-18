@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.SnackbarResult
 import androidx.compose.material.rememberScaffoldState
@@ -18,11 +17,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.ProvideWindowInsets
+import com.google.accompanist.insets.ui.Scaffold
 import dagger.hilt.android.AndroidEntryPoint
 import de.schnettler.scrobbler.compose.model.NavigationEvent
 import de.schnettler.scrobbler.compose.navigation.Screen
@@ -84,18 +84,22 @@ class MainActivity : AppCompatActivity() {
                             if (mainScreens.map { it.routeId }
                                     .contains(navBackStackEntry?.route()) || navBackStackEntry == null) {
                                 BottomNavigationBar(
-                                    currentRoute = navBackStackEntry?.route(),
+                                    currentDestination = navBackStackEntry?.destination,
                                     screens = mainScreens,
                                 ) { screen ->
                                     navController.navigate(screen.routeId) {
-                                        popUpTo = navController.graph.startDestination
+                                        restoreState = true
                                         launchSingleTop = true
+
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            saveState = true
+                                        }
                                     }
                                 }
                             }
                         }
-                    ) {
-                        Content(controller = navController, host = snackHost, innerPadding = it)
+                    ) { contentPadding ->
+                        Content(controller = navController, host = snackHost, innerPadding = contentPadding)
                     }
                 }
             }

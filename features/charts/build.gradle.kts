@@ -42,18 +42,20 @@ dependencies {
     // Android X
     implementation(AndroidX.lifecycle.viewModelKtx)
     implementation(AndroidX.room.ktx)
+    implementation(AndroidX.paging.compose)
 
     // Network & Serialization
     implementation(Square.Retrofit2.retrofit)
     implementation(Square.Moshi.kotlinCodegen)
     implementation("com.serjltt.moshi", "moshi-lazy-adapters", "_")
 
-    // Repository
-    implementation("com.dropbox.mobile.store", "store4", "_")
-
     // Dagger
     implementation(Google.dagger.hilt.android)
     kapt(Google.dagger.hilt.compiler)
+
+    // Other
+    implementation("com.dropbox.mobile.store", "store4", "_")
+    implementation(JakeWharton.timber)
 
     // Test
     testImplementation(Testing.junit4)

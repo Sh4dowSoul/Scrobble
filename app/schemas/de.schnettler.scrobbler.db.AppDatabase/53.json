@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 53,
-    "identityHash": "26f0675c46a6ec6b3591885e9f1c4213",
+    "identityHash": "93a555d775ad6a0691ff4594da3fd930",
     "entities": [
       {
         "tableName": "sessions",
@@ -526,12 +526,44 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "SubmissionFailureEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`timestamp` INTEGER NOT NULL, `failureCode` INTEGER NOT NULL, `failureReason` TEXT NOT NULL, PRIMARY KEY(`timestamp`))",
+        "fields": [
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "failureCode",
+            "columnName": "failureCode",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "failureReason",
+            "columnName": "failureReason",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "timestamp"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '26f0675c46a6ec6b3591885e9f1c4213')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '93a555d775ad6a0691ff4594da3fd930')"
     ]
   }
 }

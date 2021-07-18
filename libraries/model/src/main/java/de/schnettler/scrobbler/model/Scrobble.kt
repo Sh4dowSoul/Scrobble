@@ -28,8 +28,10 @@ data class Scrobble(
     var status: ScrobbleStatus = ScrobbleStatus.VOLATILE,
     var trackingStart: Long = timestamp
 ) {
-    @Ignore val id: String = name.toLowerCase(Locale.US)
-    @Ignore val url: String = "https://www.last.fm/music/$artist/_/$name"
+    @Ignore
+    val id: String = name.toLowerCase(Locale.US)
+    @Ignore
+    val url: String = "https://www.last.fm/music/$artist/_/$name"
 
     val playDuration: Duration
         get() = amountPlayed.toDuration(DurationUnit.MILLISECONDS)
@@ -52,6 +54,7 @@ data class Scrobble(
                     .MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL
             ).toString()
         } else null
+
     fun isTheSameAs(track: Scrobble?) = name == track?.name && artist == track.artist
     private fun canBeScrobbled() = duration > 30000
 
@@ -107,6 +110,7 @@ enum class ScrobbleStatus {
     PLAYING,
     PAUSED,
     SCROBBLED,
+    SUBMISSION_FAILED,
     VOLATILE,
     EXTERNAL
 }

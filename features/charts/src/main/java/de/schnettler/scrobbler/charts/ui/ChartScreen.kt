@@ -2,17 +2,18 @@ package de.schnettler.scrobbler.charts.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ListItem
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemsIndexed
 import de.schnettler.scrobbler.charts.R
 import de.schnettler.scrobbler.charts.model.ChartTab
 import de.schnettler.scrobbler.charts.preview.PreviewUtils
@@ -21,7 +22,6 @@ import de.schnettler.scrobbler.compose.navigation.UIAction.ListingSelected
 import de.schnettler.scrobbler.compose.navigation.UIError
 import de.schnettler.scrobbler.compose.theme.ThemedPreview
 import de.schnettler.scrobbler.compose.widget.CustomDivider
-import de.schnettler.scrobbler.compose.widget.FullScreenError
 import de.schnettler.scrobbler.compose.widget.IndexListIconBackground
 import de.schnettler.scrobbler.compose.widget.LoadingContent
 import de.schnettler.scrobbler.compose.widget.TabbedPager
@@ -29,6 +29,7 @@ import de.schnettler.scrobbler.core.ktx.abbreviate
 import de.schnettler.scrobbler.model.TopListArtist
 import de.schnettler.scrobbler.model.TopListTrack
 import de.schnettler.scrobbler.model.Toplist
+import timber.log.Timber
 
 @Composable
 fun ChartScreen(
@@ -53,37 +54,40 @@ private fun ChartPage(
     actionHandler: (UIAction) -> Unit
 ) {
     val currentTab = ChartTab.values()[pageIndex]
-    val state by when (currentTab) {
-        ChartTab.Artist -> viewModel.artistState.collectAsState()
-        ChartTab.Track -> viewModel.trackState.collectAsState()
+    val pagingItems = when (currentTab) {
+        ChartTab.Artist -> viewModel.artistState.collectAsLazyPagingItems()
+        ChartTab.Track -> viewModel.trackState.collectAsLazyPagingItems()
     }
 
-    if (state.isError) {
-        errorHandler(
-            UIError.ShowErrorSnackbar(
-                state = state,
-                fallbackMessage = stringResource(id = R.string.error_charts),
-                onAction = { viewModel.refresh(currentTab) }
-            ))
+    val loadStates = pagingItems.loadState
+
+    if (loadStates.refresh is LoadState.Error) {
+        val errorState = loadStates.refresh as LoadState.Error
+        errorHandler(UIError.Snackbar(
+            errorState.error,
+            stringResource(id = R.string.error_charts),
+            onAction = { pagingItems.refresh() },
+        ))
+        Timber.e(errorState.error)
     }
 
     LoadingContent(
-        empty = state.isInitialLoading,
-        loading = state.isRefreshLoading,
-        onRefresh = { viewModel.refresh(currentTab) }) {
-        state.currentData?.let {
-            ChartList(it, actionHandler)
-        } ?: FullScreenError()
+        empty = false,
+        loading = loadStates.refresh == LoadState.Loading,
+        onRefresh = { pagingItems.refresh() }
+    ) {
+        ChartList(pagingItems, actionHandler)
     }
 }
 
 @Composable
 private fun ChartList(
-    chartData: List<Toplist>,
+    chartData: LazyPagingItems<out Toplist>,
     handler: (UIAction) -> Unit,
     modifier: Modifier = Modifier,
 ) = LazyColumn(modifier) {
-    itemsIndexed(items = chartData) { index, entry ->
+
+    itemsIndexed(lazyPagingItems = chartData) { index, entry ->
         when (entry) {
             is TopListArtist -> ChartArtistListItem(
                 name = entry.value.name,
@@ -133,5 +137,5 @@ private fun RankingListItem(title: String, subtitle: String, index: Int, onClick
 @Preview
 @Composable
 fun ChartListPreview() = ThemedPreview {
-    ChartList(chartData = PreviewUtils.generateFakeArtistCharts(5), { })
+    ChartList(chartData = PreviewUtils.generateFakeArtistChartsFlow(5).collectAsLazyPagingItems(), {})
 }

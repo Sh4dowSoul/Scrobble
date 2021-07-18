@@ -2,6 +2,7 @@ package de.schnettler.scrobbler.submission.domain
 
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.Transaction
 import de.schnettler.scrobbler.model.Scrobble
 import de.schnettler.scrobbler.model.ScrobbleStatus
 import de.schnettler.scrobbler.persistence.dao.BaseDao
@@ -15,5 +16,11 @@ abstract class SubmissionDao : BaseDao<Scrobble> {
     abstract suspend fun updateTrackData(timestamp: Long, track: String, artist: String, album: String)
 
     @Query("UPDATE localTracks SET status = :status WHERE timestamp in (:timestamps)")
-    abstract suspend fun updateScrobbleStatus(timestamps: List<Long>, status: ScrobbleStatus = ScrobbleStatus.SCROBBLED)
+    abstract suspend fun updateScrobbleStatus(timestamps: List<Long>, status: ScrobbleStatus)
+
+    @Transaction
+    open suspend fun updateScrobbleData(scrobble: Scrobble) {
+        updateTrackData(scrobble.timestamp, scrobble.name, scrobble.artist, scrobble.album)
+        updateScrobbleStatus(listOf(scrobble.timestamp), ScrobbleStatus.LOCAL)
+    }
 }

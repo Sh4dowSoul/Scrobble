@@ -4,12 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltNavGraphViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import de.schnettler.scrobbler.charts.ui.ChartScreen
 import de.schnettler.scrobbler.charts.ui.ChartViewModel
-import de.schnettler.scrobbler.charts.ui.ChartViewModelImpl
 import de.schnettler.scrobbler.compose.model.NavigationEvent
 import de.schnettler.scrobbler.compose.navigation.Screen
 import de.schnettler.scrobbler.compose.navigation.UIAction
@@ -45,22 +44,22 @@ fun MainRouteContent(
 
     NavHost(navController = navController, startDestination = Screen.History.routeId) {
         destination(Screen.Charts) {
-            val viewModel: ChartViewModel = hiltNavGraphViewModel<ChartViewModelImpl>()
+            val viewModel: ChartViewModel = hiltViewModel()
             ChartScreen(viewModel = viewModel, actionHandler = actioner, errorHandler = errorer, modifier = modifier)
         }
         destination(Screen.History) {
-            val viewModel: LocalViewModel = hiltNavGraphViewModel()
+            val viewModel: LocalViewModel = hiltViewModel()
             HistoryScreen(
                 viewModel = viewModel, actionHandler = actioner, errorHandler = errorer, modifier = modifier,
                 loggedIn = sessionStatus is SessionState.LoggedIn
             )
         }
         destination(Screen.Search) {
-            val viewModel: SearchViewModel = hiltNavGraphViewModel<SearchViewModelImpl>()
+            val viewModel: SearchViewModel = hiltViewModel<SearchViewModelImpl>()
             SearchScreen(viewModel = viewModel, navigator = navigator, errorHandler = errorer, modifier = modifier)
         }
         destination(Screen.Profile) {
-            val viewModel: ProfileViewModel = hiltNavGraphViewModel<ProfileViewModelImpl>()
+            val viewModel: ProfileViewModel = hiltViewModel<ProfileViewModelImpl>()
             ProfileScreen(
                 viewModel = viewModel,
                 actionHandler = actioner,
@@ -70,14 +69,14 @@ fun MainRouteContent(
         }
         destination(Screen.Settings) { SettingsScreen(dataStoreManager = model.dataStoreManager, modifier = modifier) }
         destination(Screen.ArtistDetails) { args ->
-            val viewModel: ArtistViewModel = hiltNavGraphViewModel()
+            val viewModel: ArtistViewModel = hiltViewModel()
             args.firstOrNull()?.let {
                 viewModel.updateKey(LastFmEntity.Artist(it))
                 DetailScreen(viewModel = viewModel, actioner = actioner, errorer = errorer)
             }
         }
         destination(screen = Screen.AlbumDetails) { args ->
-            val viewModel: AlbumViewModel = hiltNavGraphViewModel()
+            val viewModel: AlbumViewModel = hiltViewModel()
             val artist = args.firstOrNull()
             val album = args.secondOrNull()
             if (!artist.isNullOrEmpty() && !album.isNullOrEmpty()) {
@@ -86,7 +85,7 @@ fun MainRouteContent(
             }
         }
         destination(screen = Screen.TrackDetails) { args ->
-            val viewModel: TrackViewModel = hiltNavGraphViewModel()
+            val viewModel: TrackViewModel = hiltViewModel()
             val artist = args.firstOrNull()
             val track = args.secondOrNull()
             if (!artist.isNullOrEmpty() && !track.isNullOrEmpty()) {

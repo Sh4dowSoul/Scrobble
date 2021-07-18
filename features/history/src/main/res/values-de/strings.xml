@@ -35,4 +35,8 @@
     <string name="scrobble_source">Quelle</string>
     <string name="scrobble_runtime">Laufzeit</string>
     <string name="scrobble_timestamp">Zeitstempel</string>
+
+    <!-- Rejected -->
+    <string name="scrobbles_rejected_title">Scrobbles abgelehnt</string>
+    <string name="scrobbles_rejected_description">Scrobbles von last.fm abgelehnt</string>
 </resources>

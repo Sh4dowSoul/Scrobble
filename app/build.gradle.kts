@@ -108,6 +108,7 @@ dependencies {
     implementation(AndroidX.activity.compose)
     implementation(AndroidX.hilt.navigationCompose)
     implementation(Google.accompanist.insets)
+    implementation(Google.accompanist.insets.ui)
 
     // AndroidX
     implementation(AndroidX.compose.runtime.liveData)

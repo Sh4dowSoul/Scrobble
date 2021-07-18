@@ -7,7 +7,6 @@ import androidx.work.Data
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import de.schnettler.lastfm.models.Errors
 import de.schnettler.scrobbler.submission.model.ScrobbleResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -27,12 +26,11 @@ class ScrobbleWorker @AssistedInject constructor(
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
-        val submissionResult = repo.submitCachedScrobbles()
+        val submissionResults = repo.submitCachedScrobbles()
 
         return@withContext when {
-            submissionResult.accepted.isNotEmpty() -> Result.success(generateSuccessData(submissionResult.accepted))
-            submissionResult.errors.contains(Errors.OFFLINE)
-                    || submissionResult.errors.contains(Errors.UNAVAILABLE) -> Result.retry()
+            submissionResults.accepted.isNotEmpty() -> Result.success(generateSuccessData(submissionResults.accepted))
+            submissionResults.errors.any { it.recoverable } -> Result.retry()
             else -> Result.failure()
         }
     }

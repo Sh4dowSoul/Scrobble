@@ -3,7 +3,7 @@ package de.schnettler.scrobbler.submission.api
 import com.serjltt.moshi.adapters.Wrapped
 import de.schnettler.scrobbler.network.common.annotation.tag.SessionAuthentication
 import de.schnettler.scrobbler.network.common.annotation.tag.SignatureAuthentication
-import de.schnettler.scrobbler.submission.model.MutlipleScrobblesResponse
+import de.schnettler.scrobbler.submission.model.MultiScrobbleResponse
 import de.schnettler.scrobbler.submission.model.NowPlayingResponse
 import de.schnettler.scrobbler.submission.model.SingleScrobbleResponse
 import retrofit2.Response
@@ -37,5 +37,5 @@ interface SubmissionApi {
     @Wrapped(path = ["scrobbles"])
     suspend fun submitMultipleScrobbles(
         @QueryMap body: Map<String, String>
-    ): Response<MutlipleScrobblesResponse>
+    ): Response<MultiScrobbleResponse>
 }

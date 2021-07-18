@@ -23,6 +23,7 @@ dependencies {
     implementation(project(":libraries:network:common"))
     implementation(project(":libraries:network:lastfm"))
     implementation(project(":libraries:persistence"))
+    implementation(project(":libraries:core"))
 
     // Network & Serialization
     implementation(Square.Retrofit2.retrofit)
@@ -31,7 +32,7 @@ dependencies {
 
     // Repository
     implementation("com.dropbox.mobile.store", "store4", "_")
-    implementation("com.github.Sh4dowSoul.ComposePreferences:datastore-manager:develop-SNAPSHOT")
+    implementation("com.github.Sh4dowSoul.ComposePreferences:datastore-manager:_")
 
     // AndroidX
     implementation(AndroidX.work.runtimeKtx)

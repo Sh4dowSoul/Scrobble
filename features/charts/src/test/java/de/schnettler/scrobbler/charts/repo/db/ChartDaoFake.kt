@@ -1,21 +1,20 @@
 package de.schnettler.scrobbler.charts.repo.db
 
+import androidx.paging.PagingSource
 import de.schnettler.scrobbler.charts.dao.ChartDao
 import de.schnettler.scrobbler.charts.repo.tools.BaseDaoFake
 import de.schnettler.scrobbler.model.TopListArtist
 import de.schnettler.scrobbler.model.TopListEntry
 import de.schnettler.scrobbler.model.TopListTrack
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
 
 class ChartDaoFake : ChartDao() {
     private val baseDaoFake = BaseDaoFake<String, TopListEntry> { "${it.entityType}_${it.listType}_${it.index}" }
 
-    override fun getTopArtists(): Flow<List<TopListArtist>> {
-        return flowOf(emptyList())
+    override fun getTopArtists(): PagingSource<Int, TopListArtist> {
+        return FakeArtistChartPagingSource()
     }
 
-    override fun getTopTracks(): Flow<List<TopListTrack>> {
+    override fun getTopTracks(): PagingSource<Int, TopListTrack> {
         TODO("Not yet implemented")
     }
 
@@ -36,6 +35,14 @@ class ChartDaoFake : ChartDao() {
     }
 
     override suspend fun delete(obj: TopListEntry) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun clearTopArtists() {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun clearTopTracks() {
         TODO("Not yet implemented")
     }
 }

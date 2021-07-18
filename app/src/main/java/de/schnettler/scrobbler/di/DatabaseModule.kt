@@ -23,6 +23,7 @@ import de.schnettler.scrobbler.persistence.dao.ArtistDao
 import de.schnettler.scrobbler.persistence.dao.TrackDao
 import de.schnettler.scrobbler.profile.db.ToplistDao
 import de.schnettler.scrobbler.profile.db.UserDao
+import de.schnettler.scrobbler.submission.db.SubmissionFailureDao
 import de.schnettler.scrobbler.submission.domain.SubmissionDao
 import javax.inject.Singleton
 
@@ -101,4 +102,8 @@ class DatabaseModule {
     @Provides
     @Singleton
     fun provideToplistDao(database: AppDatabase): ToplistDao = database.toplistDao()
+
+    @Provides
+    @Singleton
+    fun provideSubmissionFailureDao(database: AppDatabase): SubmissionFailureDao = database.submissionFailureDao()
 }

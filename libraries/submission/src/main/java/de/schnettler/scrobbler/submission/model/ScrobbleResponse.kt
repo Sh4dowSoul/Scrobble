@@ -8,7 +8,7 @@ interface GeneralScrobbleResponse {
 }
 
 @JsonClass(generateAdapter = true)
-data class MutlipleScrobblesResponse(
+data class MultiScrobbleResponse(
     @Json(name = "@attr") override val status: StatusResponse,
     val scrobble: List<ScrobbleResponse>
 ) : GeneralScrobbleResponse
@@ -27,4 +27,6 @@ data class ScrobbleResponse(
     val albumArtist: CorrectionResponse,
     val track: CorrectionResponse,
     val ignoredMessage: IgnoredResponse
-)
+) {
+    fun accepted() = ignoredMessage.code == 0L
+}

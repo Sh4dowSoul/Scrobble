@@ -3,7 +3,6 @@ package de.schnettler.scrobbler.history.ui
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.schnettler.lastfm.models.LastFmResponse
 import de.schnettler.scrobbler.core.ui.viewmodel.RefreshableStateViewModel
 import de.schnettler.scrobbler.history.domain.LocalRepository
 import de.schnettler.scrobbler.history.domain.RejectionCodeToReasonMapper
@@ -29,19 +28,23 @@ class LocalViewModel @Inject constructor(
 
     val events = MutableLiveData<Event<SubmissionEvent>>()
 
-    val cachedScrobblesCOunt by lazy {
+    val cachedScrobblesCount by lazy {
         repo.getNumberOfCachedScrobbles()
+    }
+
+    val ignoredScrobblesCount by lazy {
+        repo.getNumberOfIgnoredScrobbles()
     }
 
     fun scheduleScrobbleSubmission() {
         isSubmitting.value = true
         viewModelScope.launch(Dispatchers.IO) {
-            val result = submissionRepo.submitCachedScrobbles()
+            val results = submissionRepo.submitCachedScrobbles()
 
-            val errorMessage = result.errors.firstOrNull()?.description ?: result.exceptions.firstOrNull()?.message
+            val errorMessage = results.errors.firstOrNull()?.message
             val mappedResult = SubmissionResult(
-                accepted = result.accepted.map { it.timestamp },
-                ignored = result.ignored.associateBy({ it.timestamp }, { it.ignoredMessage.code }),
+                accepted = results.accepted.map { it.timestamp },
+                ignored = results.ignored.associateBy({ it.timestamp }, { it.ignoredMessage.code }),
                 error = errorMessage
             )
             events.postValue(Event(SubmissionEvent.Success(mappedResult)))
@@ -71,22 +74,19 @@ class LocalViewModel @Inject constructor(
     }
 
     fun submitScrobble(track: Scrobble) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val response = submissionRepo.submitScrobble(track)
-            if (response is LastFmResponse.SUCCESS) {
-                submissionRepo.markScrobblesAsSubmitted(track)
-            }
+        viewModelScope.launch {
+            submissionRepo.submitScrobble(track)
         }
     }
 
     fun deleteScrobble(scrobble: Scrobble) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             submissionRepo.deleteScrobble(scrobble)
         }
     }
 
     fun editCachedScrobble(scrobble: Scrobble) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             submissionRepo.submitScrobbleEdit(scrobble)
         }
     }

@@ -85,4 +85,6 @@ enum class Errors(private val num: Long, val title: String, val description: Str
     );
 
     override fun toString(): String = "[$num] $name: $title - $description"
+
+    fun isRecoverable() = this == OFFLINE || this == UNAVAILABLE
 }

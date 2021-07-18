@@ -31,7 +31,9 @@ import de.schnettler.scrobbler.persistence.dao.ArtistDao
 import de.schnettler.scrobbler.persistence.dao.TrackDao
 import de.schnettler.scrobbler.profile.db.ToplistDao
 import de.schnettler.scrobbler.profile.db.UserDao
+import de.schnettler.scrobbler.submission.db.SubmissionFailureDao
 import de.schnettler.scrobbler.submission.domain.SubmissionDao
+import de.schnettler.scrobbler.submission.model.SubmissionFailureEntity
 import dev.matrix.roomigrant.GenerateRoomMigrations
 
 @Database(
@@ -46,8 +48,9 @@ import dev.matrix.roomigrant.GenerateRoomMigrations
         Scrobble::class,
         RelatedArtistEntry::class,
         Stats::class,
-        EntityInfo::class
-    ], version = 53
+        EntityInfo::class,
+        SubmissionFailureEntity::class
+    ], version = 55
 )
 @Suppress("TooManyFunctions")
 @TypeConverters(TypeConverter::class)
@@ -72,6 +75,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun historyDao(): HistoryDao
     abstract fun imageDao(): ImageDao
     abstract fun toplistDao(): ToplistDao
+    abstract fun submissionFailureDao(): SubmissionFailureDao
 }
 
 @Suppress("SpreadOperator")

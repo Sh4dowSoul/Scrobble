@@ -43,6 +43,7 @@ dependencies {
     implementation(Google.accompanist.pager)
     implementation(Google.accompanist.flowlayout)
     implementation(Google.accompanist.swiperefresh)
+    implementation(Google.accompanist.insets.ui)
 
     // Other
     implementation(JakeWharton.timber)

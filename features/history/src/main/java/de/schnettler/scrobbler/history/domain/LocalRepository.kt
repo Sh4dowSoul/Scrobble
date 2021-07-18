@@ -7,10 +7,12 @@ import de.schnettler.scrobbler.core.map.forLists
 import de.schnettler.scrobbler.history.api.HistoryApi
 import de.schnettler.scrobbler.model.Scrobble
 import de.schnettler.scrobbler.model.ScrobbleStatus
+import de.schnettler.scrobbler.submission.db.SubmissionFailureDao
 import javax.inject.Inject
 
 class LocalRepository @Inject constructor(
     private val historyDao: HistoryDao,
+    private val submissionFailureDao: SubmissionFailureDao,
     private val historyApi: HistoryApi
 ) {
     val recentTracksStore = StoreBuilder.from(
@@ -33,6 +35,8 @@ class LocalRepository @Inject constructor(
     ).build()
 
     fun getNumberOfCachedScrobbles() = historyDao.getNumberOfCachedScrobbles()
+
+    fun getNumberOfIgnoredScrobbles() = submissionFailureDao.getNumberOfIgnoredScrobbles()
 
     suspend fun getScrobblesById(ids: List<Long>) = historyDao.getScrobblesWithTimestamp(ids)
 }

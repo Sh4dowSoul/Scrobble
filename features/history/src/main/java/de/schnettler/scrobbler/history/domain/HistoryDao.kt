@@ -14,8 +14,8 @@ abstract class HistoryDao : BaseDao<Scrobble> {
         limit: Int = 50
     ): Flow<List<Scrobble>>
 
-    @Query("SELECT COUNT(timestamp) FROM localTracks WHERE status = :status")
-    abstract fun getNumberOfCachedScrobbles(status: ScrobbleStatus = ScrobbleStatus.LOCAL): Flow<Int>
+    @Query("SELECT COUNT(timestamp) FROM localTracks WHERE status = 'LOCAL'")
+    abstract fun getNumberOfCachedScrobbles(): Flow<Int>
 
     @Query("DELETE FROM localTracks WHERE status = :include")
     abstract fun deleteByStatus(include: ScrobbleStatus = ScrobbleStatus.PLAYING)

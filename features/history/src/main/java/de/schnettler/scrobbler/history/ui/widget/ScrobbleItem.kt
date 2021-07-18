@@ -1,9 +1,11 @@
 package de.schnettler.scrobbler.history.ui.widget
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,13 +13,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.ListItem
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,11 +26,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import de.schnettler.scrobbler.compose.theme.AppColor
 import de.schnettler.scrobbler.compose.widget.CustomDivider
 import de.schnettler.scrobbler.compose.widget.NameListIcon
 import de.schnettler.scrobbler.core.ktx.asMinSec
@@ -39,6 +41,7 @@ import de.schnettler.scrobbler.core.ktx.packageNameToAppName
 import de.schnettler.scrobbler.history.R
 import de.schnettler.scrobbler.history.model.ScrobbleAction
 import de.schnettler.scrobbler.model.Scrobble
+import de.schnettler.scrobbler.model.ScrobbleStatus
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
@@ -66,7 +69,7 @@ fun ScrobbleItem(track: Scrobble, onActionClicked: (ScrobbleAction) -> Unit) {
                     )
                     else Spacer(modifier = Modifier.height(16.dp))
                     CustomDivider()
-                    QuickActions(track.isCached(), onActionClicked)
+                    QuickActions(track.status, onActionClicked)
                 }
             }
         },
@@ -79,20 +82,35 @@ fun ScrobbleItem(track: Scrobble, onActionClicked: (ScrobbleAction) -> Unit) {
             track.timestampToRelativeTime()?.let {
                 Column(verticalArrangement = Arrangement.Center) {
                     Text(text = it)
-                    if (track.isCached()) {
-                        Surface(
-                            color = MaterialTheme.colors.secondary,
-                            shape = CircleShape,
-                            modifier = Modifier.padding(top = 8.dp, end = 16.dp).size(8.dp).align(
-                                Alignment.End
-                            )
-                        ) { }
+
+                    when (track.status) {
+                        ScrobbleStatus.LOCAL -> {
+                            StatusIndicator(color = MaterialTheme.colors.secondary)
+                        }
+                        ScrobbleStatus.SUBMISSION_FAILED -> {
+                            StatusIndicator(color = AppColor.Error)
+                        }
+                        else -> Unit
                     }
                 }
             }
         }
     )
     CustomDivider()
+}
+
+@Composable
+private fun ColumnScope.StatusIndicator(
+    color: Color,
+) {
+    Canvas(modifier = Modifier
+        .padding(top = 8.dp, end = 16.dp)
+        .size(8.dp)
+        .align(
+            Alignment.End
+        ), onDraw = {
+        drawCircle(color = color)
+    })
 }
 
 @ExperimentalTime
@@ -127,9 +145,17 @@ private fun InformationItem(category: String, value: String) {
 }
 
 @Composable
-fun QuickActions(isCached: Boolean, onActionClicked: (ScrobbleAction) -> Unit) {
+fun QuickActions(status: ScrobbleStatus, onActionClicked: (ScrobbleAction) -> Unit) {
     val actions = mutableListOf<ScrobbleAction>()
-    if (isCached) { actions.addAll(listOf(ScrobbleAction.EDIT, ScrobbleAction.DELETE, ScrobbleAction.SUBMIT)) }
+    when (status) {
+        ScrobbleStatus.LOCAL -> {
+            actions.addAll(listOf(ScrobbleAction.EDIT, ScrobbleAction.DELETE, ScrobbleAction.SUBMIT))
+        }
+        ScrobbleStatus.SUBMISSION_FAILED -> {
+            actions.addAll(listOf(ScrobbleAction.EDIT, ScrobbleAction.DELETE))
+        }
+        else -> Unit
+    }
     actions.add(ScrobbleAction.OPEN)
     QuickActionsRow(items = actions, onSelect = onActionClicked)
 }

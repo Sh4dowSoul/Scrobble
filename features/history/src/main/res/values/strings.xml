@@ -37,4 +37,8 @@
     <string name="scrobble_source">Source</string>
     <string name="scrobble_runtime">Runtime</string>
     <string name="scrobble_timestamp">Timestamp</string>
+
+    <!-- Rejected -->
+    <string name="scrobbles_rejected_title">Scrobbles rejected</string>
+    <string name="scrobbles_rejected_description">scrobbles were rejected by last.fm</string>
 </resources>
