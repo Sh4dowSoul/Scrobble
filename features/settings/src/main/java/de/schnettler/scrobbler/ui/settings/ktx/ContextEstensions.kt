@@ -1,4 +1,4 @@
-package de.schnettler.scrobbler.ui.settings
+package de.schnettler.scrobbler.ui.settings.ktx
 
 import android.content.Context
 import android.content.Intent

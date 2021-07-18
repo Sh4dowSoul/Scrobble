@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -47,7 +48,7 @@ private fun ExpandingSummary(
     collapsedMaxLines: Int = 4,
     expandedMaxLines: Int = Int.MAX_VALUE,
 ) {
-    var expanded by mutableStateOf(false)
+    var expanded by remember { mutableStateOf(false) }
     Box(modifier = Modifier.clickable(onClick = { expanded = !expanded }, enabled = expandable)) {
         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high) {
             Text(

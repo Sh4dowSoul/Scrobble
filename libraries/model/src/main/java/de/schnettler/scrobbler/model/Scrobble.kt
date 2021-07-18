@@ -5,7 +5,6 @@ import android.text.format.DateUtils
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import java.util.Locale
 import kotlin.math.roundToInt
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
@@ -29,7 +28,7 @@ data class Scrobble(
     var trackingStart: Long = timestamp
 ) {
     @Ignore
-    val id: String = name.toLowerCase(Locale.US)
+    val id: String = name.lowercase()
     @Ignore
     val url: String = "https://www.last.fm/music/$artist/_/$name"
 

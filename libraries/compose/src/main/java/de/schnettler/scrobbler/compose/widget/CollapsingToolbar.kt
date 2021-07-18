@@ -42,7 +42,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.coil.rememberCoilPainter
+import coil.compose.rememberImagePainter
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.statusBarsHeight
 import com.google.accompanist.insets.ui.TopAppBar
@@ -230,9 +230,14 @@ private fun BackdropImage(
     Surface(modifier = modifier) {
         if (backdropImage != null) {
             Image(
-                painter = rememberCoilPainter(request = backdropImage, fadeIn = true),
+                painter = rememberImagePainter(
+                    data = backdropImage,
+                    builder = {
+                        crossfade(true)
+                    },
+                ),
+                contentScale = ContentScale.Crop,
                 contentDescription = null,
-                contentScale = ContentScale.Crop
             )
         }
         // TODO show a placeholder if null

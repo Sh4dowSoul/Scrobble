@@ -41,7 +41,7 @@ dependencies {
     implementation(AndroidX.compose.material.icons.extended)
     implementation(AndroidX.compose.ui.tooling)
     implementation(Google.accompanist.insets)
-    implementation(Google.accompanist.coil)
+   implementation("io.coil-kt:coil-compose:_")
 
     // Network & Serialization
     implementation(Square.Retrofit2.retrofit)

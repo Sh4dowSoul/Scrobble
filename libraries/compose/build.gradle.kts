@@ -39,12 +39,13 @@ dependencies {
     implementation(AndroidX.navigation.compose)
     implementation(AndroidX.constraintLayoutCompose)
     implementation(Google.accompanist.insets)
-    implementation(Google.accompanist.coil)
     implementation(Google.accompanist.pager)
     implementation(Google.accompanist.flowlayout)
     implementation(Google.accompanist.swiperefresh)
     implementation(Google.accompanist.insets.ui)
+    implementation("com.google.accompanist", "accompanist-pager-indicators", "_")
 
     // Other
     implementation(JakeWharton.timber)
+    implementation("io.coil-kt", "coil-compose", "_")
 }

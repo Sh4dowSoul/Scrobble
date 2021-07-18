@@ -29,7 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.google.accompanist.coil.rememberCoilPainter
+import coil.compose.rememberImagePainter
 import de.schnettler.scrobbler.compose.theme.AppColor
 import de.schnettler.scrobbler.compose.theme.DominantColorCache
 import de.schnettler.scrobbler.compose.theme.DominantColors
@@ -76,7 +76,7 @@ fun MediaCard(
 
             imageUrl?.let {
                 Image(
-                    painter = rememberCoilPainter(request = it, fadeIn = true),
+                    painter = rememberImagePainter(data = it, builder = { crossfade(true) }),
                     contentDescription = "Picture of $name",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.matchParentSize(),

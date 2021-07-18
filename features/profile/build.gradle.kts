@@ -42,7 +42,7 @@ dependencies {
     implementation(AndroidX.compose.material.icons.extended)
     implementation(AndroidX.compose.ui.tooling)
     implementation(Google.Accompanist.insets)
-    implementation(Google.Accompanist.coil)
+   implementation("io.coil-kt:coil-compose:_")
 
     // AndroidX
     implementation(AndroidX.room.common)

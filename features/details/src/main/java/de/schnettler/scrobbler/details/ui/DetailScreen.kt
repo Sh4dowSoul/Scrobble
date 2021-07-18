@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.coil.rememberCoilPainter
+import coil.compose.rememberImagePainter
 import de.schnettler.scrobbler.compose.navigation.UIAction
 import de.schnettler.scrobbler.compose.navigation.UIAction.ListingSelected
 import de.schnettler.scrobbler.compose.navigation.UIError
@@ -78,7 +78,7 @@ fun AlbumCategory(
             ) {
                 Box(modifier = Modifier.size(60.dp)) {
                     Image(
-                        painter = rememberCoilPainter(request = album?.imageUrl, fadeIn = true),
+                        painter = rememberImagePainter(data = album?.imageUrl, builder = { crossfade(true) }),
                         contentDescription = null,
                         contentScale = ContentScale.Crop
                     )

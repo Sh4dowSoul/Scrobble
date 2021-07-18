@@ -81,7 +81,7 @@ fun SearchScreen(
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                 colors = TextFieldDefaults.textFieldColors(backgroundColor = AppColor.BackgroundElevated),
-                keyboardActions = KeyboardActions { softKeyboard?.hideSoftwareKeyboard() }
+                keyboardActions = KeyboardActions { softKeyboard?.hide() }
             )
         }
         SelectableChipRow(

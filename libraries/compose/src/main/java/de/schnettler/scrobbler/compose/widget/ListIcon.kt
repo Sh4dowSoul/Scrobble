@@ -68,7 +68,7 @@ fun NameListIconErrorPreview() = ThemedPreview {
 @Preview
 @Composable
 fun PlainListIconBackgroundPreview() = ThemedPreview {
-    PlainListIconBackground() { }
+    PlainListIconBackground { }
 }
 
 @Preview

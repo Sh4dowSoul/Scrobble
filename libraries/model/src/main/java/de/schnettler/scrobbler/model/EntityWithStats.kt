@@ -14,11 +14,6 @@ sealed class EntityWithStats(
         @Relation(parentColumn = "id", entityColumn = "id") override val stats: Stats
     ) : EntityWithStats(entity, stats)
 
-    data class ArtistWithStats(
-        override val entity: LastFmEntity.Artist,
-        override val stats: Stats
-    ) : EntityWithStats(entity, stats)
-
     data class TrackWithStats(
         @Embedded override val entity: LastFmEntity.Track,
         @Relation(parentColumn = "id", entityColumn = "id") override val stats: Stats,

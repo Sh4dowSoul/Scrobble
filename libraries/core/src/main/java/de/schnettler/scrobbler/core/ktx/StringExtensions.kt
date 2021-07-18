@@ -1,7 +1,7 @@
 package de.schnettler.scrobbler.core.ktx
 
 import androidx.core.text.HtmlCompat
-import java.util.Locale
+import java.util.*
 
 const val PACKAGE_YT_MUSIC = "com.google.android.apps.youtube.music"
 const val GENERIC_FLAG_EMOJI = "U+1F38C"
@@ -20,14 +20,16 @@ fun String.toFlagEmoji(): String {
     // 1. Get Country Code
     val countryCode = Locale.getISOCountries().find {
         Locale("", it).getDisplayCountry(Locale.ENGLISH) == this.capitalizeAll()
-    }?.toUpperCase(Locale.ROOT) ?: return GENERIC_FLAG_EMOJI
+    }?.uppercase() ?: return GENERIC_FLAG_EMOJI
 
     // 2. Generate Emoji
     return String(Character.toChars(Character.codePointAt(countryCode, 0) - 0x41 + 0x1F1E6)) +
-        String(Character.toChars(Character.codePointAt(countryCode, 1) - 0x41 + 0x1F1E6))
+            String(Character.toChars(Character.codePointAt(countryCode, 1) - 0x41 + 0x1F1E6))
 }
 
-fun String.capitalizeAll(): String = split(" ").joinToString(" ") { it.capitalize(Locale.ROOT) }
+fun String.capitalizeAll(): String = split(" ").joinToString(" ") { word: String ->
+    word.replaceFirstChar { it.uppercase() }
+}
 
 fun String.firstLetter() = this.first { it.isLetter() }.toString()
 

@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.coil.rememberCoilPainter
+import coil.compose.rememberImagePainter
 import com.google.accompanist.insets.navigationBarsHeight
 import de.schnettler.scrobbler.compose.ktx.itemSpacer
 import de.schnettler.scrobbler.compose.navigation.MenuAction
@@ -30,7 +30,6 @@ import de.schnettler.scrobbler.details.model.AlbumDetailEntity
 import de.schnettler.scrobbler.details.ui.widget.ExpandingInfoCard
 import de.schnettler.scrobbler.details.ui.widget.ListeningStats
 import de.schnettler.scrobbler.model.LastFmEntity
-import kotlin.math.roundToInt
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
@@ -105,13 +104,13 @@ private fun ArtistItem(
         secondaryText = {
             Text(
                 text = "$trackNumber ${stringResource(id = R.string.albumdetails_tracks)} ⦁ " +
-                        "${albumLength.inMinutes.roundToInt()} ${stringResource(id = R.string.albumdetails_minutes)}"
+                        "${albumLength.inWholeMinutes} ${stringResource(id = R.string.albumdetails_minutes)}"
             )
         },
         icon = {
             PlainListIconBackground {
                 Image(
-                    painter = rememberCoilPainter(request = artist.imageUrl, fadeIn = true),
+                    painter = rememberImagePainter(data = artist.imageUrl, builder = { crossfade(true) }),
                     contentDescription = "Artist picture",
                 )
             }

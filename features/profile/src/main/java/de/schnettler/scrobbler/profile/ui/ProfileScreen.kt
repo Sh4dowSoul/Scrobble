@@ -45,7 +45,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.coil.rememberCoilPainter
+import coil.compose.rememberImagePainter
 import com.google.accompanist.insets.statusBarsHeight
 import de.schnettler.scrobbler.compose.model.MediaCardSize
 import de.schnettler.scrobbler.compose.navigation.UIAction
@@ -191,7 +191,7 @@ private fun TopTracksChunkedList(list: List<TopListTrack>, actioner: (UIAction) 
                     PlainListIconBackground {
                         track.imageUrl?.let {
                             Image(
-                                painter = rememberCoilPainter(request = it),
+                                painter = rememberImagePainter(it),
                                 contentDescription = "Album art of track ${track.name} by ${track.artist}",
                             )
                         } ?: Text(text = track.name.firstLetter())
@@ -240,7 +240,7 @@ private fun UserInfo(user: User) {
                         Box(Modifier.size(56.dp)) {
                             if (user.imageUrl.isNotEmpty()) {
                                 Image(
-                                    painter = rememberCoilPainter(request = user.imageUrl),
+                                    painter = rememberImagePainter(user.imageUrl),
                                     contentDescription = "Your profile picture",
                                     modifier = Modifier.fillMaxSize()
                                 )
@@ -268,7 +268,7 @@ private fun PeriodSelectDialog(
     onDismiss: () -> Unit,
     initial: UITimePeriod,
 ) {
-    var selected by mutableStateOf(initial)
+    var selected by remember { mutableStateOf(initial) }
     val radioGroupOptions = UITimePeriod.values().asList()
     AlertDialog(
         onDismissRequest = { onDismiss() },
